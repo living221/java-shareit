@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.ConflictException;
 import ru.practicum.shareit.exceptions.ObjectNotFoundException;
+import ru.practicum.shareit.exceptions.ValidationException;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.dao.UserDao;
@@ -26,7 +27,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto addNewUser(UserDto userDto) {
-        userEmailValidation(userDto);
+        userEmailDuplicateCheck(userDto);
         User user = toUser(userDto);
         return toUserDto(userDao.createUser(user));
     }
@@ -37,6 +38,7 @@ public class UserServiceImpl implements UserService {
             log.debug("User with id {} was not found.", userId);
             throw new ObjectNotFoundException(String.format("User with id: %s was not found!", userId));
         }
+
 
         User user = toUser(userDto);
         UserDto userFromStorage = getUserById(userId);
@@ -52,11 +54,11 @@ public class UserServiceImpl implements UserService {
             boolean isEmailNotChanged = email.equals(userDto.getEmail());
 
             if (!isEmailNotChanged) {
-                userEmailValidation(userDto);
+                userEmailDuplicateCheck(userDto);
             }
         }
-
         user.setId(userId);
+        userValidation(user);
         return toUserDto(userDao.updateUser(user, userId));
     }
 
@@ -89,10 +91,29 @@ public class UserServiceImpl implements UserService {
         userDao.deleteUser(userId);
     }
 
-    private void userEmailValidation(UserDto user) {
+    private void userEmailDuplicateCheck(UserDto user) {
         if (userDao.getAllEmails().contains(user.getEmail())) {
             log.debug("User email {} already exist.", user.getEmail());
             throw new ConflictException(String.format("User email %s already exist.", user.getEmail()));
+        }
+    }
+
+    private void userValidation(User user) {
+        if (user.getEmail().isBlank()) {
+            log.debug("User with email {} was attempted to create.", user.getEmail());
+            throw new ValidationException("User email cannot be empty.");
+        }
+        if (!user.getEmail().contains("@")) {
+            log.debug("User with email {} was attempted to create.", user.getEmail());
+            throw new ValidationException("User email have to contain '@' sign.");
+        }
+        if (user.getName().isBlank()) {
+            log.debug("User with login {} was attempted to create.", user.getName());
+            throw new ValidationException("User login cannot be empty or blank.");
+        }
+        if (user.getName().contains(" ")) {
+            log.debug("User with login {} was attempted to create.", user.getName());
+            throw new ValidationException("User login cannot have spaces in it.");
         }
     }
 }
