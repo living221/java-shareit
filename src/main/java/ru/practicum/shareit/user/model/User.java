@@ -1,4 +1,4 @@
-package ru.practicum.shareit.user;
+package ru.practicum.shareit.user.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,7 +17,7 @@ import javax.validation.constraints.NotEmpty;
 @NoArgsConstructor
 @Builder
 public class User {
-    
+
     private Long id;
     @NotBlank(message = "Name cannot be empty")
     private String name;

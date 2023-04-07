@@ -4,8 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.shareit.request.ItemRequest;
-import ru.practicum.shareit.user.User;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  * TODO Sprint add-controllers.
@@ -17,9 +18,10 @@ import ru.practicum.shareit.user.User;
 @Builder
 public class ItemDto {
     private Long id;
+    @NotBlank(message = "Name cannot be empty")
     private String name;
+    @NotBlank(message = "Description cannot be empty")
     private String description;
-    private Boolean isAvailable;
-    private User owner;
-    private ItemRequest request;
+    @NotNull(message = "Available cannot be empty")
+    private Boolean available;
 }

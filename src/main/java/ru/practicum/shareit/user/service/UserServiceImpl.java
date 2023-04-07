@@ -6,10 +6,10 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.ConflictException;
 import ru.practicum.shareit.exceptions.ObjectNotFoundException;
 import ru.practicum.shareit.exceptions.ValidationException;
-import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.dao.UserDao;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
 import java.util.Objects;

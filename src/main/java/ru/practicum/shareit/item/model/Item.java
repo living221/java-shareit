@@ -5,7 +5,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.request.ItemRequest;
-import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.user.model.User;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  * TODO Sprint add-controllers.
@@ -17,9 +20,12 @@ import ru.practicum.shareit.user.User;
 @Builder
 public class Item {
     private Long id;
+    @NotBlank
     private String name;
+    @NotBlank
     private String description;
-    private Boolean isAvailable;
+    @NotNull
+    private Boolean available;
     private User owner;
     private ItemRequest request;
 }
