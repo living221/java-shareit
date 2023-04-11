@@ -98,7 +98,7 @@ public class ItemServiceImpl implements ItemService {
     public List<ItemDto> searchItems(Long userId, String text) {
         userService.getUserById(userId);
 
-        if (text.length() < 1) {
+        if (text.isBlank()) {
             return Collections.emptyList();
         }
 

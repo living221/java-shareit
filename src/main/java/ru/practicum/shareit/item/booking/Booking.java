@@ -1,4 +1,4 @@
-package ru.practicum.shareit.booking;
+package ru.practicum.shareit.item.booking;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,5 +24,4 @@ public class Booking {
     private Item item;
     private User booker;
     private BookingStatus status;
-
 }

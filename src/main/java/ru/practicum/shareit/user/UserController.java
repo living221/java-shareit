@@ -8,9 +8,6 @@ import ru.practicum.shareit.user.service.UserService;
 import javax.validation.Valid;
 import java.util.List;
 
-/**
- * TODO Sprint add-controllers.
- */
 @RestController
 @RequestMapping(path = "/users")
 @RequiredArgsConstructor
@@ -42,5 +39,4 @@ public class UserController {
     public void delete(@PathVariable Long userId) {
         userService.deleteUser(userId);
     }
-
 }
