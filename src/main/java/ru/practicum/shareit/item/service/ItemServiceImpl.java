@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.ForbiddenException;
 import ru.practicum.shareit.exceptions.ObjectNotFoundException;
 import ru.practicum.shareit.item.ItemMapper;
-import ru.practicum.shareit.item.dao.ItemDao;
+import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
@@ -27,7 +27,7 @@ import static ru.practicum.shareit.user.UserMapper.toUser;
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
 
-    private final ItemDao itemDao;
+    private final ItemRepository itemRepository;
     private final UserService userService;
 
     @Override
@@ -37,7 +37,7 @@ public class ItemServiceImpl implements ItemService {
         User user = toUser(userService.getUserById(userId));
         item.setOwner(user);
 
-        return toItemDto(itemDao.createItem(item));
+        return toItemDto(itemRepository.save(item));
     }
 
     @Override
@@ -67,14 +67,14 @@ public class ItemServiceImpl implements ItemService {
         item.setRequest(itemFromStorage.getRequest());
         item.setId(itemFromStorage.getId());
 
-        return toItemDto(itemDao.updateItem(item));
+        return toItemDto(itemRepository.save(item));
     }
 
     @Override
     public Item getItemById(Long userId, Long itemId) {
         userService.getUserById(userId);
 
-        Optional<Item> itemById = itemDao.getItemById(userId, itemId);
+        Optional<Item> itemById = itemRepository.findById(itemId);
 
         if (itemById.isEmpty()) {
             log.debug("User with id {} have not item with id {}.", userId, itemId);
@@ -89,7 +89,7 @@ public class ItemServiceImpl implements ItemService {
     public List<ItemDto> getAllItems(Long userId) {
         userService.getUserById(userId);
 
-        return itemDao.getAllItems(userId).stream()
+        return itemRepository.findAllByOwnerIdOrderByIdAsc(userId).stream()
                 .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
     }
@@ -102,7 +102,10 @@ public class ItemServiceImpl implements ItemService {
             return Collections.emptyList();
         }
 
-        return itemDao.searchItems(text).stream()
+        return itemRepository.findAll().stream()
+                .filter(Item::getAvailable)
+                .filter(item -> item.getName().toLowerCase().contains(text.toLowerCase())
+                        || item.getDescription().toLowerCase().contains(text.toLowerCase()))
                 .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
     }

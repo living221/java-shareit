@@ -21,7 +21,6 @@ import static ru.practicum.shareit.user.UserMapper.toUserDto;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-//        private final UserDao userDao;
     private final UserRepository userRepository;
 
     @Override
@@ -30,7 +29,6 @@ public class UserServiceImpl implements UserService {
         User user = toUser(userDto);
 
         return toUserDto(userRepository.save(user));
-//        return toUserDto(userDao.createUser(user));
     }
 
     @Override
@@ -41,12 +39,6 @@ public class UserServiceImpl implements UserService {
                     throw new ObjectNotFoundException(String.format("User with id: %s was not found!", userId));
                 }
         );
-
-//        if (userDao.userNotExists(userId)) {
-//            log.debug("User with id {} was not found.", userId);
-//            throw new ObjectNotFoundException(String.format("User with id: %s was not found!", userId));
-//        }
-
 
         User user = toUser(userDto);
         UserDto userFromStorage = getUserById(userId);
@@ -68,60 +60,34 @@ public class UserServiceImpl implements UserService {
         user.setId(userId);
         userValidation(user);
         return toUserDto(userRepository.save(user));
-
-//        return toUserDto(userDao.updateUser(user, userId));
     }
 
     @Override
     public UserDto getUserById(Long userId) {
-//        User user = userDao.getUserById(userId);
         User user = userRepository.findById(userId).orElseThrow(
                 () -> {
                     log.debug("User with id {} was not found.", userId);
                     throw new ObjectNotFoundException(String.format("User with id: %s was not found!", userId));
                 }
         );
-
-//        if (Objects.isNull(user)) {
-//            log.debug("User with id {} was not found.", userId);
-//            throw new ObjectNotFoundException(String.format("User with id: %s was not found!", userId));
-//        }
-
         return toUserDto(user);
     }
 
     @Override
     public List<UserDto> getAllUsers() {
         return toUserDto(userRepository.findAll());
-
-//        return userDao.getAllUsers().stream()
-//                .map(UserMapper::toUserDto)
-//                .collect(Collectors.toList());
     }
 
     @Override
     public void deleteUser(Long userId) {
         userRepository.deleteById(userId);
-
-//        if (userDao.userNotExists(userId)) {
-//            log.debug("User with id {} was not found.", userId);
-//            throw new ObjectNotFoundException(String.format("User with id: %s was not found!", userId));
-//        }
-//
-//        userDao.deleteUser(userId);
     }
 
     private void userEmailDuplicateCheck(UserDto user) {
-        List<User> users = userRepository.findAll();
-        if (users.stream().anyMatch((u -> u.getEmail().equals(user.getEmail())))) {
+        if (userRepository.getAllEmails().contains(user.getEmail())) {
             log.debug("User email {} already exist.", user.getEmail());
             throw new ConflictException(String.format("User email %s already exist.", user.getEmail()));
         }
-
-//        if (userDao.getAllEmails().contains(user.getEmail())) {
-//            log.debug("User email {} already exist.", user.getEmail());
-//            throw new ConflictException(String.format("User email %s already exist.", user.getEmail()));
-//        }
     }
 
     private void userValidation(User user) {

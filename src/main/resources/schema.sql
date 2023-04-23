@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS items
     description VARCHAR(255) NOT NULL,
     available BOOLEAN,
     owner_id BIGINT NOT NULL,
-    request_id BIGINT NOT NULL,
+    request_id BIGINT,
     FOREIGN KEY (request_id) REFERENCES requests (id) ON DELETE CASCADE,
     FOREIGN KEY (owner_id) REFERENCES users (id) ON DELETE CASCADE
 );
