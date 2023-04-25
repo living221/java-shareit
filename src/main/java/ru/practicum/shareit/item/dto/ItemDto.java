@@ -5,12 +5,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.item.booking.dto.BookingItemDto;
+import ru.practicum.shareit.item.comment.dto.CommentDto;
 import ru.practicum.shareit.util.Create;
 import ru.practicum.shareit.util.Update;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -31,4 +33,6 @@ public class ItemDto {
     private Boolean available;
     private BookingItemDto lastBooking;
     private BookingItemDto nextBooking;
+
+    private List<CommentDto> comments;
 }

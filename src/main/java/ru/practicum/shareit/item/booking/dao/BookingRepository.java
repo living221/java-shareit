@@ -12,16 +12,6 @@ import java.util.Optional;
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 
-    @Query(value = "SELECT * FROM bookings b JOIN items i ON i.id = b.item_id "
-            + "WHERE b.item_id = :itemId AND b.end_date < :currentTime ORDER BY b.end_date LIMIT 1",
-            nativeQuery = true)
-    Optional<Booking> getLastBooking(Long itemId, LocalDateTime currentTime);
-
-    @Query(value = "SELECT * FROM bookings b JOIN items i ON i.id = b.item_id "
-            + "WHERE b.item_id = :itemId AND b.start_date > :currentTime AND b.status != 'REJECTED' ORDER BY b.start_date LIMIT 1",
-            nativeQuery = true)
-    Optional<Booking> getNextBooking(Long itemId, LocalDateTime currentTime);
-
     @Query(value = "SELECT b FROM Booking b " +
             "JOIN Item i ON i.id = b.item.id " +
             "WHERE b.booker.id = :userId " +
@@ -106,4 +96,29 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "ORDER BY b.start DESC")
     List<Booking> findAllRejectedBookingsByOwnerId(Long userId);
 
+    @Query(value = "SELECT b FROM Booking b " +
+            "JOIN Item i ON i.id = b.item.id " +
+            "WHERE b.booker.id = :userId " +
+            "AND i.id = :itemId " +
+            "AND b.status = 'APPROVED' " +
+            "AND b.end < :now ")
+    List<Booking> findAllByUserBookings(Long userId, Long itemId, LocalDateTime now);
+
+    @Query(value = "SELECT * FROM bookings b " +
+            "JOIN items i ON i.id = b.item_id " +
+            "WHERE b.item_id = :itemId " +
+            "AND b.start_date < :currentTime " +
+            "AND b.status = 'APPROVED' " +
+            "ORDER BY b.start_date DESC LIMIT 1",
+            nativeQuery = true)
+    Optional<Booking> getLastBooking(Long itemId, LocalDateTime currentTime);
+
+    @Query(value = "SELECT * FROM bookings b " +
+            "JOIN items i ON i.id = b.item_id " +
+            "WHERE b.item_id = :itemId " +
+            "AND b.start_date > :currentTime " +
+            "AND b.status = 'APPROVED' " +
+            "ORDER BY b.start_date ASC LIMIT 1",
+            nativeQuery = true)
+    Optional<Booking> getNextBooking(Long itemId, LocalDateTime currentTime);
 }
