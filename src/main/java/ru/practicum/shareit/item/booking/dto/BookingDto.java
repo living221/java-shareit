@@ -1,22 +1,26 @@
 package ru.practicum.shareit.item.booking.dto;
 
-import lombok.Value;
+import lombok.Builder;
+import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 import ru.practicum.shareit.util.Create;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
-@Value
+@Data
+@Builder
 public class BookingDto {
+    public static final String DATE_FORMAT = "yyyy-MM-ddTHH:mm:ss";
+
     @NotNull(groups = {Create.class}, message = "itemId cannot be empty.")
-    Long itemId;
+    private Long itemId;
 
     @NotNull(groups = {Create.class})
-    @DateTimeFormat(pattern = "yyyy-MM-ddTHH:mm:ss")
-    LocalDateTime start;
+    @DateTimeFormat(pattern = DATE_FORMAT)
+    private LocalDateTime start;
 
     @NotNull(groups = {Create.class})
-    @DateTimeFormat(pattern = "yyyy-MM-ddTHH:mm:ss")
-    LocalDateTime end;
+    @DateTimeFormat(pattern = DATE_FORMAT)
+    private LocalDateTime end;
 }

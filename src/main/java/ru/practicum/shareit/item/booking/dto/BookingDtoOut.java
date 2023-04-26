@@ -16,16 +16,17 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 public class BookingDtoOut {
+    public static final String DATE_FORMAT = "yyyy-MM-ddTHH:mm:ss";
     private Long id;
 
     @NotNull(groups = {Create.class}, message = "itemId cannot be empty.")
     @FutureOrPresent
-    @DateTimeFormat(pattern = "yyyy-MM-ddTHH:mm:ss")
+    @DateTimeFormat(pattern = DATE_FORMAT)
     private LocalDateTime start;
 
     @NotNull(groups = {Create.class})
     @Future
-    @DateTimeFormat(pattern = "yyyy-MM-ddTHH:mm:ss")
+    @DateTimeFormat(pattern = DATE_FORMAT)
     private LocalDateTime end;
 
     private BookingStatus status;
