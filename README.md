@@ -38,4 +38,8 @@ The service allows you not only to reserve an item for certain dates, but also t
  
 The application will run on port 8080. Access the public API at `http://localhost:8080`.
 
+## Project status
+
+The project is still under development, with plans to finalise the functionality of the thing requests and to cover the project with tests.
+
 
