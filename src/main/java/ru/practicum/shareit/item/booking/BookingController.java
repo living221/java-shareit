@@ -9,12 +9,14 @@ import ru.practicum.shareit.item.booking.model.BookingState;
 import ru.practicum.shareit.item.booking.service.BookingService;
 import ru.practicum.shareit.util.Create;
 
+import javax.validation.constraints.Min;
 import java.util.List;
 import java.util.Objects;
 
 @RestController
 @RequestMapping(path = "/bookings")
 @RequiredArgsConstructor
+@Validated
 public class BookingController {
 
     private final BookingService bookingService;
@@ -42,23 +44,27 @@ public class BookingController {
 
     @GetMapping
     public List<BookingDtoOut> getAll(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                      @RequestParam(value = "state", defaultValue = "ALL") String bookingState) {
+                                      @RequestParam(value = "state", defaultValue = "ALL") String bookingState,
+                                      @RequestParam(value = "from", required = false, defaultValue = "0") @Min(0) Integer from,
+                                      @RequestParam(value = "size", required = false, defaultValue = "10") @Min(1) Integer size) {
         BookingState state = BookingState.from(bookingState);
         if (Objects.isNull(state)) {
             throw new IllegalArgumentException(String.format("Unknown state: %s", bookingState));
         }
 
-        return bookingService.getAllByBooker(userId, bookingState);
+        return bookingService.getAllByBooker(userId, bookingState, from, size);
     }
 
     @GetMapping("/owner")
     public List<BookingDtoOut> getAllByOwner(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                             @RequestParam(value = "state", defaultValue = "ALL") String bookingState) {
+                                             @RequestParam(value = "state", defaultValue = "ALL") String bookingState,
+                                             @RequestParam(value = "from", required = false, defaultValue = "0") @Min(0) Integer from,
+                                             @RequestParam(value = "size", required = false, defaultValue = "10") @Min(1) Integer size) {
         BookingState state = BookingState.from(bookingState);
         if (Objects.isNull(state)) {
             throw new IllegalArgumentException(String.format("Unknown state: %s", bookingState));
         }
 
-        return bookingService.getAllByOwner(userId, bookingState);
+        return bookingService.getAllByOwner(userId, bookingState, from, size);
     }
 }

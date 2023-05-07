@@ -2,6 +2,8 @@ package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exceptions.ForbiddenException;
@@ -87,7 +89,7 @@ public class ItemServiceImpl implements ItemService {
             item.setAvailable(itemFromStorage.getAvailable());
         }
         item.setOwner(itemFromStorage.getOwner());
-        item.setRequest(itemFromStorage.getRequest());
+        item.setRequestId(itemFromStorage.getRequestId());
         item.setId(itemFromStorage.getId());
 
         return toItemDto(itemRepository.save(item));
@@ -121,10 +123,12 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ItemDto> getAllItems(Long userId) {
+    public List<ItemDto> getAllItems(Long userId, Integer from, Integer size) {
         userService.getUserById(userId);
 
-        List<ItemDto> items = itemRepository.findAllByOwnerIdOrderByIdAsc(userId).stream()
+        Pageable pageable = PageRequest.of(from / size, size);
+
+        List<ItemDto> items = itemRepository.findAllByOwnerIdOrderByIdAsc(userId, pageable).stream()
                 .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
 
@@ -148,14 +152,16 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ItemDto> searchItems(Long userId, String text) {
+    public List<ItemDto> searchItems(Long userId, String text, Integer from, Integer size) {
         userService.getUserById(userId);
+
+        Pageable pageable = PageRequest.of(from / size, size);
 
         if (text.isBlank()) {
             return Collections.emptyList();
         }
 
-        return itemRepository.findAll().stream()
+        return itemRepository.findAll(pageable).stream()
                 .filter(Item::getAvailable)
                 .filter(item -> item.getName().toLowerCase().contains(text.toLowerCase())
                         || item.getDescription().toLowerCase().contains(text.toLowerCase()))

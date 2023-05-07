@@ -2,8 +2,11 @@ package ru.practicum.shareit.request.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.exceptions.ObjectNotFoundException;
+import ru.practicum.shareit.request.RequestMapper;
 import ru.practicum.shareit.request.dao.RequestRepository;
 import ru.practicum.shareit.request.dto.RequestDto;
 import ru.practicum.shareit.request.model.Request;
@@ -11,6 +14,8 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static ru.practicum.shareit.request.RequestMapper.toRequest;
 import static ru.practicum.shareit.request.RequestMapper.toRequestDto;
@@ -36,17 +41,40 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<RequestDto> getUserRequests(Long userId) {
-        return null;
+        userService.getUserById(userId);
+
+        List<Request> requests = requestRepository.findAllByRequestorIdOrderByCreated(userId);
+
+        return requests.stream()
+                .map(RequestMapper::toRequestDto)
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<RequestDto> getAllRequests(Long userId, Integer from, Integer size) {
-        return null;
+        userService.getUserById(userId);
+
+        List<Request> requests = requestRepository.findAllByRequestorId(userId, PageRequest.of(from, size));
+
+        return requests.stream()
+                .map(RequestMapper::toRequestDto)
+                .collect(Collectors.toList());
     }
 
     @Override
     public RequestDto getRequestById(Long userId, Long requestId) {
-        return null;
+        userService.getUserById(userId);
+
+        Optional<Request> requestById = requestRepository.findById(requestId);
+
+        if (requestById.isEmpty()) {
+            log.debug("Request with id {} have not been found.", requestId);
+            throw new ObjectNotFoundException(String.format("Request with id: %s " +
+                    "have not been found.", requestId));
+        }
+
+        return toRequestDto(requestById.get());
     }
 }

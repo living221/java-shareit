@@ -31,8 +31,6 @@ public class Item {
     @ToString.Exclude
     private User owner;
 
-    @ManyToOne()
-    @JoinColumn(name = "request_id")
-    @ToString.Exclude
-    private Request request;
+    @Column(name = "request_id")
+    private Long requestId;
 }
