@@ -56,7 +56,7 @@ public class RequestServiceImpl implements RequestService {
     public List<RequestDto> getAllRequests(Long userId, Integer from, Integer size) {
         userService.getUserById(userId);
 
-        List<Request> requests = requestRepository.findAllByRequestorId(userId, PageRequest.of(from, size));
+        List<Request> requests = requestRepository.findAllByRequestorIdNot(userId, PageRequest.of(from, size));
 
         return requests.stream()
                 .map(RequestMapper::toRequestDto)
