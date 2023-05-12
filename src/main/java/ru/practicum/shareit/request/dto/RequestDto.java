@@ -10,7 +10,6 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.util.Create;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.List;
 
