@@ -17,7 +17,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 @DataJpaTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
@@ -240,7 +241,7 @@ class BookingRepositoryTest {
         Optional<Booking> bookingOptional = bookingRepository.getLastBooking(1L, LocalDateTime.now());
         Booking actualBooking;
 
-        if (bookingOptional.isPresent()){
+        if (bookingOptional.isPresent()) {
             actualBooking = bookingOptional.get();
 
             assertEquals(actualBooking.getId(), 1L);
@@ -255,7 +256,7 @@ class BookingRepositoryTest {
         Optional<Booking> bookingOptional = bookingRepository.getNextBooking(1L, LocalDateTime.now());
         Booking actualBooking;
 
-        if (bookingOptional.isPresent()){
+        if (bookingOptional.isPresent()) {
             actualBooking = bookingOptional.get();
 
             assertEquals(actualBooking.getId(), 3L);

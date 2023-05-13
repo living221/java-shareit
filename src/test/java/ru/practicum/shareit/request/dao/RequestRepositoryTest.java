@@ -13,10 +13,10 @@ import ru.practicum.shareit.user.model.User;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
-class RequestRepositoryIT {
+class RequestRepositoryTest {
 
     @Autowired
     RequestRepository requestRepository;
@@ -33,7 +33,7 @@ class RequestRepositoryIT {
             .name("name2")
             .email("email2@email.com")
             .build();
-    
+
     private final Item item = Item.builder()
             .name("name")
             .description("description")

@@ -16,7 +16,6 @@ import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.booking.dao.BookingRepository;
 import ru.practicum.shareit.item.booking.model.Booking;
 import ru.practicum.shareit.item.booking.model.BookingStatus;
-import ru.practicum.shareit.item.comment.CommentMapper;
 import ru.practicum.shareit.item.comment.dao.CommentRepository;
 import ru.practicum.shareit.item.comment.dto.CommentDto;
 import ru.practicum.shareit.item.comment.model.Comment;
@@ -35,7 +34,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
-import static ru.practicum.shareit.item.comment.CommentMapper.*;
+import static ru.practicum.shareit.item.comment.CommentMapper.toCommentDto;
 
 @ExtendWith(MockitoExtension.class)
 class ItemServiceImplTest {
