@@ -2,13 +2,13 @@ package ru.practicum.shareit.request;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.request.dto.RequestDto;
 import ru.practicum.shareit.request.service.RequestService;
 import ru.practicum.shareit.user.model.User;
@@ -40,13 +40,6 @@ class ItemRequestControllerTest {
             .email("email@email.com")
             .build();
 
-    private final ItemDto item = ItemDto.builder()
-            .id(1L)
-            .name("item name")
-            .description("description")
-            .available(true)
-            .build();
-
     private final RequestDto requestDto = RequestDto.builder()
             .id(1L)
             .description("description")
@@ -56,6 +49,7 @@ class ItemRequestControllerTest {
 
     @Test
     @SneakyThrows
+    @DisplayName("Тестирование эндпоинта post /requests")
     void createRequest() {
         when(requestService.addNewRequest(any(), any())).thenReturn(requestDto);
 
@@ -74,6 +68,7 @@ class ItemRequestControllerTest {
 
     @Test
     @SneakyThrows
+    @DisplayName("Тестирование эндпоинта get /requests")
     void getUserRequests() {
         when(requestService.getUserRequests(user.getId())).thenReturn(List.of(requestDto));
 
@@ -91,6 +86,7 @@ class ItemRequestControllerTest {
 
     @Test
     @SneakyThrows
+    @DisplayName("Тестирование эндпоинта get /requests/all")
     void getAllRequests() {
         Integer from = 0;
         Integer size = 10;
@@ -110,6 +106,7 @@ class ItemRequestControllerTest {
 
     @Test
     @SneakyThrows
+    @DisplayName("Тестирование эндпоинта get /requests/{requestId}")
     void get() {
         Long requestId = 1L;
 

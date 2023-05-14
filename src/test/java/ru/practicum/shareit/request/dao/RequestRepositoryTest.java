@@ -1,11 +1,13 @@
 package ru.practicum.shareit.request.dao;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.test.annotation.DirtiesContext;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.model.Request;
 import ru.practicum.shareit.user.model.User;
@@ -16,6 +18,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class RequestRepositoryTest {
 
     @Autowired
@@ -66,6 +69,7 @@ class RequestRepositoryTest {
     }
 
     @Test
+    @DisplayName("Тестирование получения запросов по Id пользователя")
     void findAllByRequestorIdOrderByCreated() {
         List<Request> requests = requestRepository.findAllByRequestorIdOrderByCreated(1L);
 
@@ -74,6 +78,7 @@ class RequestRepositoryTest {
     }
 
     @Test
+    @DisplayName("Тестирование получения всех запросов кроме своих")
     void findAllByRequestorIdNot() {
         List<Request> requests = requestRepository.findAllByRequestorIdNot(2L, PageRequest.of(0, 1));
 

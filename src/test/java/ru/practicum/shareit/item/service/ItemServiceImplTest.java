@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item.service;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -92,13 +93,6 @@ class ItemServiceImplTest {
             .author(user)
             .build();
 
-    private final CommentDto commentDto = CommentDto.builder()
-            .id(1L)
-            .text("comment")
-            .created(LocalDateTime.now())
-            .authorName("username")
-            .build();
-
     private final Booking booking = Booking.builder()
             .id(1L)
             .item(item)
@@ -109,7 +103,8 @@ class ItemServiceImplTest {
             .build();
 
     @Test
-    void addNewItem() {
+    @DisplayName("Тестирование добавления вещи")
+    void addNewItem_whenInvoked_returnItemDto() {
         when(userService.getUserById(user.getId())).thenReturn(userDto);
         when(itemRepository.save(item)).thenReturn(item);
 
@@ -121,6 +116,7 @@ class ItemServiceImplTest {
     }
 
     @Test
+    @DisplayName("Тестирование обновления вещи")
     void updateItem() {
         Item updatedItem = Item.builder()
                 .id(1L)
@@ -144,6 +140,7 @@ class ItemServiceImplTest {
     }
 
     @Test
+    @DisplayName("Тестирование получения вещи по Id")
     void getItemById() {
         when(userService.getUserById(user.getId())).thenReturn(userDto);
         when(itemRepository.findById(item.getId())).thenReturn(Optional.of(item));
@@ -154,6 +151,7 @@ class ItemServiceImplTest {
     }
 
     @Test
+    @DisplayName("Тестирование добавления вещи по несуществующему Id")
     void getItemById_whenItemIdIsInvalid_thenThrowNotFoundException() {
         when(userService.getUserById(user.getId())).thenReturn(userDto);
         when(itemRepository.findById(item.getId())).thenReturn(Optional.empty());
@@ -166,6 +164,7 @@ class ItemServiceImplTest {
     }
 
     @Test
+    @DisplayName("Тестирование получения всех вещей")
     void getAllItems() {
         List<ItemDto> expectedItemsDto = List.of(itemDto);
 
@@ -181,6 +180,7 @@ class ItemServiceImplTest {
     }
 
     @Test
+    @DisplayName("Тестирование получения всех комментариев")
     void getAllComments() {
         List<CommentDto> expectedCommentsDto = List.of(toCommentDto(comment));
         when(commentRepository.findAllByItemId(item.getId())).thenReturn(List.of(comment));
@@ -192,11 +192,10 @@ class ItemServiceImplTest {
     }
 
     @Test
+    @DisplayName("Тестирование поиска вещи")
     void searchItems() {
-        List<ItemDto> expectedItemsDto = List.of(itemDto);
-
         when(userService.getUserById(user.getId())).thenReturn(userDto);
-        Page<Item> items = new PageImpl(List.of(item));
+        Page<Item> items = new PageImpl<>(List.of(item));
         when(itemRepository.findAll(any(Pageable.class))).thenReturn(items);
 
         List<ItemDto> actualItemsDto = itemService.searchItems(user.getId(), "item", 0, 10);
@@ -207,6 +206,7 @@ class ItemServiceImplTest {
     }
 
     @Test
+    @DisplayName("Тестирование добавления комментария")
     void createComment() {
         CommentDto expectedCommentDto = toCommentDto(comment);
         when(userService.getUserById(user.getId())).thenReturn(userDto);

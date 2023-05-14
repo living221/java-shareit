@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.dao;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -51,6 +52,7 @@ class ItemRepositoryTest {
     }
 
     @Test
+    @DisplayName("Тестирование получения всех вещей пользователя по Id")
     void findAllByOwnerIdOrderByIdAsc() {
         List<Item> items = itemRepository.findAllByOwnerIdOrderByIdAsc(1L, PageRequest.of(0, 1));
 

@@ -1,12 +1,12 @@
 package ru.practicum.shareit.request.service;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.exceptions.ObjectNotFoundException;
 import ru.practicum.shareit.request.dto.RequestDto;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.service.UserService;
@@ -37,6 +37,7 @@ public class RequestServiceIT {
             .build();
 
     @Test
+    @DisplayName("Интеграционное тестирование добавления запроса")
     void addNewRequest() {
         UserDto addedUser = userService.addNewUser(userDto);
         requestService.addNewRequest(addedUser.getId(), requestDto);
@@ -48,6 +49,7 @@ public class RequestServiceIT {
     }
 
     @Test
+    @DisplayName("Интеграционное тестирование получение запроса по несуществующему Id")
     void getRequestById_whenRequestIdIsNotValid_thenThrowObjectNotFoundException() {
         Long requestId = 2L;
 

@@ -1,5 +1,6 @@
 package ru.practicum.shareit.request.service;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -64,6 +65,7 @@ class RequestServiceImplTest {
             .build();
 
     @Test
+    @DisplayName("Тестирование добавления запроса")
     void addNewRequest() {
         RequestDto expectedRequestDto = toRequestDto(request);
         when(userService.getUserById(user.getId())).thenReturn(userDto);
@@ -75,6 +77,7 @@ class RequestServiceImplTest {
     }
 
     @Test
+    @DisplayName("Тестирование получения запросов пользователя")
     void getUserRequests() {
         List<RequestDto> expectedRequestsDto = List.of(toRequestDto(request));
         when(userService.getUserById(user.getId())).thenReturn(userDto);
@@ -86,6 +89,7 @@ class RequestServiceImplTest {
     }
 
     @Test
+    @DisplayName("Тестирование получения всех запросов")
     void getAllRequests() {
         List<RequestDto> expectedRequestsDto = List.of(toRequestDto(request));
         when(userService.getUserById(user.getId())).thenReturn(userDto);
@@ -98,6 +102,7 @@ class RequestServiceImplTest {
     }
 
     @Test
+    @DisplayName("Тестирование получения запроса по Id")
     void getRequestById() {
         RequestDto expectedRequestDto = toRequestDto(request);
         when(userService.getUserById(user.getId())).thenReturn(userDto);
@@ -109,6 +114,7 @@ class RequestServiceImplTest {
     }
 
     @Test
+    @DisplayName("Тестирование получения запроса по несуществующему Id")
     void getRequestById_whenRequestIdIsNotValid_thenThrowObjectNotFoundException() {
         when(userService.getUserById(user.getId())).thenReturn(userDto);
         when(requestRepository.findById(request.getId())).thenReturn(Optional.empty());

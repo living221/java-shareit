@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.booking.dto;
 
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
@@ -32,6 +33,7 @@ class BookingDtoTest {
 
     @Test
     @SneakyThrows
+    @DisplayName("Тестирование сериализации даты начала бронирования")
     public void startSerializes() {
         assertThat(json.write(bookingDto)).extractingJsonPathStringValue("$.start")
                 .isEqualTo(DATE_TIME);
@@ -39,6 +41,7 @@ class BookingDtoTest {
 
     @Test
     @SneakyThrows
+    @DisplayName("Тестирование сериализации даты конца бронирования")
     public void endSerializes() {
         assertThat(json.write(bookingDto)).extractingJsonPathStringValue("$.end")
                 .isEqualTo(DATE_TIME);

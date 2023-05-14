@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.booking.dao;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -88,6 +89,7 @@ class BookingRepositoryTest {
     }
 
     @Test
+    @DisplayName("Тестирование получения всех бронирований по Id пользователя")
     void findAllByBookerId() {
         List<Booking> bookings = bookingRepository.findAllByBookerId(1L, PageRequest.of(0, 10));
 
@@ -96,6 +98,7 @@ class BookingRepositoryTest {
     }
 
     @Test
+    @DisplayName("Тестирование получения всех текущих бронирований")
     void findAllCurrentBookingsByBookerId() {
         List<Booking> bookings = bookingRepository.findAllCurrentBookingsByBookerId(1L, LocalDateTime.now(),
                 PageRequest.of(0, 10));
@@ -105,6 +108,7 @@ class BookingRepositoryTest {
     }
 
     @Test
+    @DisplayName("Тестирование получения всех закончившихся бронирований")
     void findAllPastBookingsByBookerId() {
         List<Booking> bookings = bookingRepository.findAllPastBookingsByBookerId(1L, LocalDateTime.now(),
                 PageRequest.of(0, 10));
@@ -114,6 +118,7 @@ class BookingRepositoryTest {
     }
 
     @Test
+    @DisplayName("Тестирование получения всех будущих бронирований")
     void findAllFutureBookingsByBookerId() {
         List<Booking> bookings = bookingRepository.findAllFutureBookingsByBookerId(1L, LocalDateTime.now(),
                 PageRequest.of(0, 10));
@@ -123,6 +128,7 @@ class BookingRepositoryTest {
     }
 
     @Test
+    @DisplayName("Тестирование получения всех неподтвержденных бронирований")
     void findAllWaitingBookingsByBookerId() {
         Booking waitingBooking = Booking.builder()
                 .item(item)
@@ -141,6 +147,7 @@ class BookingRepositoryTest {
     }
 
     @Test
+    @DisplayName("Тестирование получения всех отклоненных бронирований")
     void findAllRejectedBookingsByBookerId() {
         Booking rejectedBooking = Booking.builder()
                 .item(item)
@@ -159,6 +166,7 @@ class BookingRepositoryTest {
     }
 
     @Test
+    @DisplayName("Тестирование получения всех бронирований по Id владельца")
     void findAllByOwnerId() {
         List<Booking> bookings = bookingRepository.findAllByOwnerId(2L, PageRequest.of(0, 10));
 
@@ -166,6 +174,7 @@ class BookingRepositoryTest {
     }
 
     @Test
+    @DisplayName("Тестирование получения всех текущих бронирований по Id владельца")
     void findAllCurrentBookingsByOwnerId() {
         List<Booking> bookings = bookingRepository.findAllCurrentBookingsByOwnerId(2L, LocalDateTime.now(),
                 PageRequest.of(0, 10));
@@ -175,6 +184,7 @@ class BookingRepositoryTest {
     }
 
     @Test
+    @DisplayName("Тестирование получения всех закончившихся бронирований по Id владельца")
     void findAllPastBookingsByOwnerId() {
         List<Booking> bookings = bookingRepository.findAllPastBookingsByOwnerId(2L, LocalDateTime.now(),
                 PageRequest.of(0, 10));
@@ -184,6 +194,7 @@ class BookingRepositoryTest {
     }
 
     @Test
+    @DisplayName("Тестирование получения всех будущих бронирований по Id владельца")
     void findAllFutureBookingsByOwnerId() {
         List<Booking> bookings = bookingRepository.findAllFutureBookingsByOwnerId(2L, LocalDateTime.now(),
                 PageRequest.of(0, 10));
@@ -193,6 +204,7 @@ class BookingRepositoryTest {
     }
 
     @Test
+    @DisplayName("Тестирование получения всех неподтвержденных бронирований по Id владельца")
     void findAllWaitingBookingsByOwnerId() {
         Booking waitingBooking = Booking.builder()
                 .item(item)
@@ -211,6 +223,7 @@ class BookingRepositoryTest {
     }
 
     @Test
+    @DisplayName("Тестирование получения всех отклоненных бронирований по Id владельца")
     void findAllRejectedBookingsByOwnerId() {
         Booking rejectedBooking = Booking.builder()
                 .item(item)
@@ -229,6 +242,7 @@ class BookingRepositoryTest {
     }
 
     @Test
+    @DisplayName("Тестирование получения всех бронирований пользователя")
     void findAllByUserBookings() {
         List<Booking> bookings = bookingRepository.findAllByUserBookings(1L, 1L, LocalDateTime.now());
 
@@ -237,6 +251,7 @@ class BookingRepositoryTest {
     }
 
     @Test
+    @DisplayName("Тестирование получения последнего бронирования")
     void getLastBooking() {
         Optional<Booking> bookingOptional = bookingRepository.getLastBooking(1L, LocalDateTime.now());
         Booking actualBooking;
@@ -252,6 +267,7 @@ class BookingRepositoryTest {
     }
 
     @Test
+    @DisplayName("Тестирование получения следующего бронирования")
     void getNextBooking() {
         Optional<Booking> bookingOptional = bookingRepository.getNextBooking(1L, LocalDateTime.now());
         Booking actualBooking;

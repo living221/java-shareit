@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item.booking.service;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -64,7 +65,7 @@ class BookingServiceImplTest {
             .email("email@email.com")
             .build();
 
-    private Item item = Item.builder()
+    private final Item item = Item.builder()
             .id(1L)
             .name("item name")
             .description("description")
@@ -115,6 +116,7 @@ class BookingServiceImplTest {
             .build();
 
     @Test
+    @DisplayName("Тестирование добавления бронирования")
     void create() {
         BookingDtoOut expectedBookingDtoOut = toBookingDtoOut(toBooking(bookingDto, item, user));
         when(userService.getUserById(userDto.getId())).thenReturn(userDto);
@@ -127,6 +129,7 @@ class BookingServiceImplTest {
     }
 
     @Test
+    @DisplayName("Тестирование добавления бронирования с датой начала до текущей")
     void create_whenStartIsBeforeNow_thenThrowValidationException() {
         when(userService.getUserById(userDto.getId())).thenReturn(userDto);
         when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
@@ -139,6 +142,7 @@ class BookingServiceImplTest {
     }
 
     @Test
+    @DisplayName("Тестирование добавления бронирования с датой конца до даты начала")
     void create_whenEndIsBeforeStart_thenThrowValidationException() {
         when(userService.getUserById(userDto.getId())).thenReturn(userDto);
         when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
@@ -151,6 +155,7 @@ class BookingServiceImplTest {
     }
 
     @Test
+    @DisplayName("Тестирование добавления бронирования с  совпадающими датами начала и конца")
     void create_whenEndIsEqualsStart_thenThrowValidationException() {
         when(userService.getUserById(userDto.getId())).thenReturn(userDto);
         when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
@@ -163,6 +168,7 @@ class BookingServiceImplTest {
     }
 
     @Test
+    @DisplayName("Тестирование добавления бронирования с недоступной вещью")
     void create_whenItemIsNotAvailable_thenThrowValidationException() {
         item.setAvailable(false);
         when(userService.getUserById(userDto.getId())).thenReturn(userDto);
@@ -176,6 +182,7 @@ class BookingServiceImplTest {
     }
 
     @Test
+    @DisplayName("Тестирование добавления бронирования с совпадающим пользователем и владельцем вещи")
     void create_whenItemOwnerEqualsBooker_thenThrowValidationException() {
         item.setOwner(user);
         when(userService.getUserById(userDto.getId())).thenReturn(userDto);
@@ -189,6 +196,7 @@ class BookingServiceImplTest {
     }
 
     @Test
+    @DisplayName("Тестирование одобрения бронирования")
     void update() {
         when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(bookingWaiting));
         when(bookingRepository.save(any(Booking.class))).thenReturn(bookingWaiting);
@@ -199,6 +207,7 @@ class BookingServiceImplTest {
     }
 
     @Test
+    @DisplayName("Тестирование запрета бронирования")
     void update_whenStatusNotApproved() {
         when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(bookingWaiting));
         when(bookingRepository.save(any(Booking.class))).thenReturn(bookingWaiting);
@@ -209,6 +218,7 @@ class BookingServiceImplTest {
     }
 
     @Test
+    @DisplayName("Тестирование одобрения бронирования когда статус не WAITING")
     void update_whenStatusNotWaiting() {
         when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(booking));
 
@@ -220,6 +230,7 @@ class BookingServiceImplTest {
     }
 
     @Test
+    @DisplayName("Тестирование одобрения бронирования не владельцем вещи")
     void update_whenUserIsNotItemOwner_thenThrowNotFoundException() {
         when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(booking));
 
@@ -231,6 +242,7 @@ class BookingServiceImplTest {
     }
 
     @Test
+    @DisplayName("Тестирование получения бронирования по Id")
     void getById() {
         BookingDtoOut expectedBookingDtoOut = toBookingDtoOut(booking);
         when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(booking));
@@ -241,6 +253,7 @@ class BookingServiceImplTest {
     }
 
     @Test
+    @DisplayName("Тестирование получения бронирования по несуществующему Id")
     void getById_whenBookingIdIsNotValid_thenThrowObjectNotFoundException() {
         when(bookingRepository.findById(anyLong())).thenReturn(Optional.empty());
 
@@ -251,6 +264,7 @@ class BookingServiceImplTest {
     }
 
     @Test
+    @DisplayName("Тестирование получения бронирования не владельцем")
     void getById_whenUserIsNotItemOwner_thenThrowObjectNotFoundException() {
         when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(booking));
 
@@ -261,6 +275,7 @@ class BookingServiceImplTest {
     }
 
     @Test
+    @DisplayName("Тестирование получения всех бронирований")
     void getAllByBooker_whenBookingStateAll() {
         List<BookingDtoOut> expectedBookingsDtoOut = List.of(toBookingDtoOut(booking));
         when(userService.getUserById(user.getId())).thenReturn(userDto);
@@ -272,6 +287,7 @@ class BookingServiceImplTest {
     }
 
     @Test
+    @DisplayName("Тестирование получения всех бронирований со статусом CURRENT")
     void getAllByBooker_whenBookingStateCURRENT() {
         List<BookingDtoOut> expectedBookingsDtoOut = List.of(toBookingDtoOut(booking));
         when(userService.getUserById(user.getId())).thenReturn(userDto);
@@ -284,6 +300,7 @@ class BookingServiceImplTest {
     }
 
     @Test
+    @DisplayName("Тестирование получения всех бронирований со статусом PAST")
     void getAllByBooker_whenBookingStatePAST() {
         List<BookingDtoOut> expectedBookingsDtoOut = List.of(toBookingDtoOut(booking));
         when(userService.getUserById(user.getId())).thenReturn(userDto);
@@ -296,6 +313,7 @@ class BookingServiceImplTest {
     }
 
     @Test
+    @DisplayName("Тестирование получения всех бронирований со статусом FUTURE")
     void getAllByBooker_whenBookingStateFUTURE() {
         List<BookingDtoOut> expectedBookingsDtoOut = List.of(toBookingDtoOut(booking));
         when(userService.getUserById(user.getId())).thenReturn(userDto);
@@ -308,6 +326,7 @@ class BookingServiceImplTest {
     }
 
     @Test
+    @DisplayName("Тестирование получения всех бронирований со статусом WAITING")
     void getAllByBooker_whenBookingStateWAITING() {
         List<BookingDtoOut> expectedBookingsDtoOut = List.of(toBookingDtoOut(booking));
         when(userService.getUserById(user.getId())).thenReturn(userDto);
@@ -320,6 +339,7 @@ class BookingServiceImplTest {
     }
 
     @Test
+    @DisplayName("Тестирование получения всех бронирований со статусом REJECTED")
     void getAllByBooker_whenBookingStateREJECTED() {
         List<BookingDtoOut> expectedBookingsDtoOut = List.of(toBookingDtoOut(booking));
         when(userService.getUserById(user.getId())).thenReturn(userDto);
@@ -332,6 +352,7 @@ class BookingServiceImplTest {
     }
 
     @Test
+    @DisplayName("Тестирование получения всех бронирований с несуществующим статусом")
     void getAllByBooker_whenBookingStateIsNotValid_thenThrowIllegalArgumentException() {
         when(userService.getUserById(user.getId())).thenReturn(userDto);
 
@@ -340,6 +361,7 @@ class BookingServiceImplTest {
     }
 
     @Test
+    @DisplayName("Тестирование получения всех бронирований владельцем")
     void getAllByOwner_whenBookingStateAll() {
         List<BookingDtoOut> expectedBookingsDtoOut = List.of(toBookingDtoOut(booking));
         when(userService.getUserById(user.getId())).thenReturn(userDto);
@@ -351,6 +373,7 @@ class BookingServiceImplTest {
     }
 
     @Test
+    @DisplayName("Тестирование получения всех бронирований владельцем со статусом CURRENT")
     void getAllByOwner_whenBookingStateCURRENT() {
         List<BookingDtoOut> expectedBookingsDtoOut = List.of(toBookingDtoOut(booking));
         when(userService.getUserById(user.getId())).thenReturn(userDto);
@@ -363,6 +386,7 @@ class BookingServiceImplTest {
     }
 
     @Test
+    @DisplayName("Тестирование получения всех бронирований владельцем со статусом PAST")
     void getAllByOwner_whenBookingStatePAST() {
         List<BookingDtoOut> expectedBookingsDtoOut = List.of(toBookingDtoOut(booking));
         when(userService.getUserById(user.getId())).thenReturn(userDto);
@@ -375,6 +399,7 @@ class BookingServiceImplTest {
     }
 
     @Test
+    @DisplayName("Тестирование получения всех бронирований владельцем со статусом FUTURE")
     void getAllByOwner_whenBookingStateFUTURE() {
         List<BookingDtoOut> expectedBookingsDtoOut = List.of(toBookingDtoOut(booking));
         when(userService.getUserById(user.getId())).thenReturn(userDto);
@@ -387,6 +412,7 @@ class BookingServiceImplTest {
     }
 
     @Test
+    @DisplayName("Тестирование получения всех бронирований владельцем со статусом WAITING")
     void getAllByOwner_whenBookingStateWAITING() {
         List<BookingDtoOut> expectedBookingsDtoOut = List.of(toBookingDtoOut(booking));
         when(userService.getUserById(user.getId())).thenReturn(userDto);
@@ -399,6 +425,7 @@ class BookingServiceImplTest {
     }
 
     @Test
+    @DisplayName("Тестирование получения всех бронирований владельцем со статусом REJECTED")
     void getAllByOwner_whenBookingStateREJECTED() {
         List<BookingDtoOut> expectedBookingsDtoOut = List.of(toBookingDtoOut(booking));
         when(userService.getUserById(user.getId())).thenReturn(userDto);
@@ -411,6 +438,7 @@ class BookingServiceImplTest {
     }
 
     @Test
+    @DisplayName("Тестирование получения всех бронирований владельцем со несуществующим статусом")
     void getAllByOwner_whenBookingStateIsNotValid_thenThrowIllegalArgumentException() {
         when(userService.getUserById(user.getId())).thenReturn(userDto);
 

@@ -1,6 +1,7 @@
 package ru.practicum.shareit.user.service;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,6 +25,7 @@ public class UserServiceIT {
             .build();
 
     @Test
+    @DisplayName("Интеграционное тестирование добавления пользователя")
     void addNewUser() {
         UserDto actualUserDto = userService.addNewUser(userDto);
 
@@ -33,6 +35,7 @@ public class UserServiceIT {
     }
 
     @Test
+    @DisplayName("Интеграционное тестирование получение пользователя по несуществующему Id")
     void getUserById_whenUserIdIsNotValid_thenThrowObjectNotFoundException() {
         Long userId = 2L;
 

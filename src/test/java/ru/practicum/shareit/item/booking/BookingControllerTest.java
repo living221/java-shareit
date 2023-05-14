@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.booking;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -65,6 +66,7 @@ class BookingControllerTest {
 
     @Test
     @SneakyThrows
+    @DisplayName("Тестирование эндпоинта post /bookings")
     void createBooking_whenBookingIsValid_thenReturnStatusOk() {
         when(bookingService.create(user.getId(), bookingDto)).thenReturn(bookingDtoOut);
 
@@ -82,6 +84,7 @@ class BookingControllerTest {
 
     @Test
     @SneakyThrows
+    @DisplayName("Тестирование эндпоинта post /bookings с невалидными данными")
     void createBooking_whenBookingIsNotValid_thenReturnBadRequest() {
         bookingDto.setItemId(null);
         bookingDto.setStart(null);
@@ -100,6 +103,7 @@ class BookingControllerTest {
 
     @Test
     @SneakyThrows
+    @DisplayName("Тестирование эндпоинта patch /bookings/{bookingId}")
     void update_whenBookingIsValid_thenReturnStatusIsOk() {
         Boolean approved = true;
         Long bookingId = 1L;
@@ -120,6 +124,7 @@ class BookingControllerTest {
 
     @Test
     @SneakyThrows
+    @DisplayName("Тестирование эндпоинта get /bookings/{bookingId}")
     void getById_whenBookingIsValid_thenReturnStatusIsOk() {
         Long bookingId = 1L;
 
@@ -136,6 +141,7 @@ class BookingControllerTest {
 
     @Test
     @SneakyThrows
+    @DisplayName("Тестирование эндпоинта get /bookings")
     void getAll_thenReturnStatusIsOk() {
         Integer from = 0;
         Integer size = 10;
@@ -159,6 +165,7 @@ class BookingControllerTest {
 
     @Test
     @SneakyThrows
+    @DisplayName("Тестирование эндпоинта get /bookings/owner")
     void getAllByOwner() {
         Integer from = 0;
         Integer size = 10;
