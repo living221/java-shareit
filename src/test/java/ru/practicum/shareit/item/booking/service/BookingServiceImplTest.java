@@ -111,8 +111,8 @@ class BookingServiceImplTest {
 
     private final BookingDto bookingDtoEndEqualsStart = BookingDto.builder()
             .itemId(1L)
-            .start(LocalDateTime.now().plusDays(1L))
-            .end(LocalDateTime.now().plusDays(1L))
+            .start(LocalDateTime.now().plusMinutes(1L))
+            .end(LocalDateTime.now().plusMinutes(1L))
             .build();
 
     @Test
