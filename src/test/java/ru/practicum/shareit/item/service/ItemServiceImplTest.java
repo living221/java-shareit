@@ -12,7 +12,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import ru.practicum.shareit.exceptions.ForbiddenException;
 import ru.practicum.shareit.exceptions.ObjectNotFoundException;
+import ru.practicum.shareit.exceptions.ValidationException;
 import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.booking.dao.BookingRepository;
 import ru.practicum.shareit.item.booking.model.Booking;
@@ -64,6 +66,13 @@ class ItemServiceImplTest {
             .email("email@email.com")
             .build();
 
+    private final User user2 = User.builder()
+            .id(2L)
+            .name("username2")
+            .email("email2@email.com")
+            .build();
+
+
     private final UserDto userDto = UserDto.builder()
             .id(1L)
             .name("username")
@@ -84,6 +93,10 @@ class ItemServiceImplTest {
             .description("description")
             .available(true)
             .comments(Collections.emptyList())
+            .build();
+
+    private final ItemDto itemDtoUpdate = ItemDto.builder()
+            .id(1L)
             .build();
 
     private final Comment comment = Comment.builder()
@@ -137,6 +150,53 @@ class ItemServiceImplTest {
 
         assertEquals("updated name", savedItem.getName());
         assertEquals("updated description", savedItem.getDescription());
+    }
+
+    @Test
+    @DisplayName("Тестирование обновления вещи когда пользователь не являтся владельцем")
+    void updateItem_whenUserIsNotItemOwner_thenThrowForbiddenException() {
+        Item updatedItem = Item.builder()
+                .id(1L)
+                .name("updated name")
+                .description("updated description")
+                .available(false)
+                .owner(user2)
+                .requestId(1L)
+                .build();
+
+        when(itemRepository.findById(anyLong())).thenReturn(Optional.of(updatedItem));
+
+        ForbiddenException itemNotFoundException = assertThrows(ForbiddenException.class,
+                () -> itemService.updateItem(user.getId(), itemDto.getId(), ItemMapper.toItemDto(updatedItem)));
+
+        assertEquals(itemNotFoundException.getMessage(), String.format("User with id %s " +
+                "is not owner of item with id %s.", user.getId(), itemDto.getId()));
+    }
+
+    @Test
+    @DisplayName("Тестирование обновления вещи с несуществующим id")
+    void updateItem_whenItemIdIsNotVAlid_thenThrowObjectNotFoundException() {
+        when(itemRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        ObjectNotFoundException itemNotFoundException = assertThrows(ObjectNotFoundException.class,
+                () -> itemService.updateItem(user.getId(), itemDto.getId(), ItemMapper.toItemDto(item)));
+
+        assertEquals(itemNotFoundException.getMessage(), String.format("Item with id %s was not found.", item.getId()));
+    }
+
+    @Test
+    @DisplayName("Тестирование обновления вещи с неполностью заполненными полями")
+    void updateItem_whenItemNameDescriptionAvailableIsNull() {
+        when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
+        when(itemRepository.save(item)).thenReturn(item);
+
+        itemService.updateItem(user.getId(), itemDtoUpdate.getId(), itemDtoUpdate);
+
+        verify(itemRepository).save(itemArgumentCaptor.capture());
+        Item savedItem = itemArgumentCaptor.getValue();
+
+        assertEquals("item name", savedItem.getName());
+        assertEquals("description", savedItem.getDescription());
     }
 
     @Test
@@ -218,5 +278,34 @@ class ItemServiceImplTest {
         CommentDto actualCommentDto = itemService.createComment(user.getId(), toCommentDto(comment), item.getId());
 
         assertEquals(expectedCommentDto, actualCommentDto);
+    }
+
+    @Test
+    @DisplayName("Тестирование добавления комментария к вещи с несуществующим Id")
+    void createComment_whenItemIdIsNotValid_thenThrowObjectNotFoundException() {
+        when(userService.getUserById(user.getId())).thenReturn(userDto);
+        when(itemRepository.findById(item.getId())).thenReturn(Optional.empty());
+
+        ObjectNotFoundException itemNotFoundException = assertThrows(ObjectNotFoundException.class,
+                () -> itemService.createComment(user.getId(), toCommentDto(comment), item.getId()));
+
+        assertEquals(itemNotFoundException.getMessage(), String.format("User with id: %s " +
+                "have not item with id: %s.", user.getId(), item.getId()));
+    }
+
+    @Test
+    @DisplayName("Тестирование добавления комментария когда у юзера не было бронирований")
+    void createComment_whenUserHaveNotAnyBookings_thenThrowValidationException() {
+        when(userService.getUserById(user.getId())).thenReturn(userDto);
+        when(itemRepository.findById(item.getId())).thenReturn(Optional.of(item));
+        when(bookingRepository.findAllByUserBookings(anyLong(), anyLong(), any(LocalDateTime.class)))
+                .thenReturn(Collections.emptyList());
+
+        ValidationException userBookingsNotFoundException = assertThrows(ValidationException.class,
+                () -> itemService.createComment(user.getId(), toCommentDto(comment), item.getId()));
+
+        assertEquals(userBookingsNotFoundException.getMessage(), String.format("User with id %s should have a least " +
+                "one booking of item with id %s.", user.getId(), item.getId()));
+
     }
 }

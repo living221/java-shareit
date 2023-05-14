@@ -165,6 +165,25 @@ class BookingControllerTest {
 
     @Test
     @SneakyThrows
+    @DisplayName("Тестирование эндпоинта get /bookings с некорректным статусом")
+    void getAll_whenBookingStatusIsInvalid_thenThrowIllegalArgumentException() {
+        Integer from = 0;
+        Integer size = 10;
+        String state = "ERROR";
+
+        when(bookingService.getAllByBooker(user.getId(), BookingState.ALL.toString(), 0, 10))
+                .thenReturn(List.of(bookingDtoOut));
+
+        mockMvc.perform(get("/bookings")
+                        .param("state", state)
+                        .param("from", String.valueOf(from))
+                        .param("size", String.valueOf(size))
+                        .header("X-Sharer-User-Id", user.getId()))
+                .andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    @SneakyThrows
     @DisplayName("Тестирование эндпоинта get /bookings/owner")
     void getAllByOwner() {
         Integer from = 0;
@@ -185,5 +204,24 @@ class BookingControllerTest {
                 .getContentAsString();
 
         assertEquals(objectMapper.writeValueAsString(List.of(bookingDtoOut)), result);
+    }
+
+    @Test
+    @SneakyThrows
+    @DisplayName("Тестирование эндпоинта get /bookings/owner")
+    void getAllByOwner_whenBookingStatusIsNotValid_thenThrowIllegalArgumentException() {
+        Integer from = 0;
+        Integer size = 10;
+        String state = "ERROR";
+
+        when(bookingService.getAllByOwner(user.getId(), BookingState.ALL.toString(), 0, 10))
+                .thenReturn(List.of(bookingDtoOut));
+
+        mockMvc.perform(get("/bookings/owner")
+                        .param("state", state)
+                        .param("from", String.valueOf(from))
+                        .param("size", String.valueOf(size))
+                        .header("X-Sharer-User-Id", user.getId()))
+                .andExpect(status().isInternalServerError());
     }
 }
