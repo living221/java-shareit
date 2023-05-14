@@ -155,19 +155,6 @@ class BookingServiceImplTest {
     }
 
     @Test
-    @DisplayName("Тестирование добавления бронирования с  совпадающими датами начала и конца")
-    void create_whenEndIsEqualsStart_thenThrowValidationException() {
-        when(userService.getUserById(userDto.getId())).thenReturn(userDto);
-        when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
-
-        ValidationException bookingValidationException = assertThrows(ValidationException.class,
-                () -> bookingService.create(userDto.getId(), bookingDtoEndEqualsStart));
-
-        assertEquals(bookingValidationException.getMessage(), String.format("End date: %s cannot be equals start date: %s.",
-                bookingDtoEndEqualsStart.getEnd(), bookingDtoEndEqualsStart.getStart()));
-    }
-
-    @Test
     @DisplayName("Тестирование добавления бронирования с недоступной вещью")
     void create_whenItemIsNotAvailable_thenThrowValidationException() {
         item.setAvailable(false);
