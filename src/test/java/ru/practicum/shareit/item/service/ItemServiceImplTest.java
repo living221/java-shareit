@@ -8,17 +8,16 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import ru.practicum.shareit.exceptions.ForbiddenException;
 import ru.practicum.shareit.exceptions.ObjectNotFoundException;
 import ru.practicum.shareit.exceptions.ValidationException;
 import ru.practicum.shareit.item.ItemMapper;
+import ru.practicum.shareit.item.booking.BookingMapper;
 import ru.practicum.shareit.item.booking.dao.BookingRepository;
 import ru.practicum.shareit.item.booking.model.Booking;
 import ru.practicum.shareit.item.booking.model.BookingStatus;
+import ru.practicum.shareit.item.comment.CommentMapper;
 import ru.practicum.shareit.item.comment.dao.CommentRepository;
 import ru.practicum.shareit.item.comment.dto.CommentDto;
 import ru.practicum.shareit.item.comment.model.Comment;
@@ -32,11 +31,13 @@ import ru.practicum.shareit.user.service.UserService;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
+import static ru.practicum.shareit.item.booking.BookingMapper.*;
 import static ru.practicum.shareit.item.comment.CommentMapper.toCommentDto;
 
 @ExtendWith(MockitoExtension.class)
@@ -104,6 +105,7 @@ class ItemServiceImplTest {
             .text("comment")
             .created(LocalDateTime.now())
             .author(user)
+            .item(item)
             .build();
 
     private final Booking booking = Booking.builder()
@@ -113,6 +115,42 @@ class ItemServiceImplTest {
             .status(BookingStatus.APPROVED)
             .start(LocalDateTime.now().minusDays(1L))
             .end(LocalDateTime.now().plusDays(1L))
+            .build();
+
+    private final Booking lastBooking = Booking.builder()
+            .id(2L)
+            .item(item)
+            .booker(user)
+            .status(BookingStatus.APPROVED)
+            .start(LocalDateTime.now().minusDays(2L))
+            .end(LocalDateTime.now().minusDays(1L))
+            .build();
+
+    private final Booking pastBooking = Booking.builder()
+            .id(3L)
+            .item(item)
+            .booker(user)
+            .status(BookingStatus.APPROVED)
+            .start(LocalDateTime.now().minusDays(10L))
+            .end(LocalDateTime.now().minusDays(9L))
+            .build();
+
+    private final Booking nextBooking = Booking.builder()
+            .id(4L)
+            .item(item)
+            .booker(user)
+            .status(BookingStatus.APPROVED)
+            .start(LocalDateTime.now().plusDays(1L))
+            .end(LocalDateTime.now().plusDays(2L))
+            .build();
+
+    private final Booking futureBooking = Booking.builder()
+            .id(5L)
+            .item(item)
+            .booker(user)
+            .status(BookingStatus.APPROVED)
+            .start(LocalDateTime.now().plusDays(10L))
+            .end(LocalDateTime.now().plusDays(20L))
             .build();
 
     @Test
@@ -226,12 +264,17 @@ class ItemServiceImplTest {
     @Test
     @DisplayName("Тестирование получения всех вещей")
     void getAllItems() {
+        itemDto.setComments(List.of(CommentMapper.toCommentDto(comment)));
+        itemDto.setLastBooking(toBookingItemDto(lastBooking));
+        itemDto.setNextBooking(toBookingItemDto(nextBooking));
         List<ItemDto> expectedItemsDto = List.of(itemDto);
 
         when(userService.getUserById(user.getId())).thenReturn(userDto);
-        when(itemRepository.findAllByOwnerIdOrderByIdAsc(user.getId(), PageRequest.of(0, 10)))
-                .thenReturn(List.of(item));
-        when(itemService.getAllComments(item.getId())).thenReturn(Collections.emptyList());
+        Page<Item> items = new PageImpl<>(List.of(item));
+        when(itemRepository.findByOwner_Id(anyLong(), any(Pageable.class))).thenReturn(items);
+        when(commentRepository.findByItemIn(anyList(), any(Sort.class))).thenReturn(List.of(comment));
+        when(bookingRepository.findAllByItemInAndStatus(anyList(), any(BookingStatus.class), any(Sort.class)))
+                .thenReturn(List.of(lastBooking, nextBooking, pastBooking, futureBooking));
 
         List<ItemDto> actualItemsDto = itemService.getAllItems(user.getId(), 0, 10);
 

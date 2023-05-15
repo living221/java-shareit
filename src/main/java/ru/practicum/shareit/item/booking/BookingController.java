@@ -45,8 +45,8 @@ public class BookingController {
     @GetMapping
     public List<BookingDtoOut> getAll(@RequestHeader("X-Sharer-User-Id") Long userId,
                                       @RequestParam(value = "state", defaultValue = "ALL") String bookingState,
-                                      @RequestParam(value = "from", required = false, defaultValue = "0") @Min(0) Integer from,
-                                      @RequestParam(value = "size", required = false, defaultValue = "10") @Min(1) Integer size) {
+                                      @RequestParam(value = "from", defaultValue = "0") @Min(0) Integer from,
+                                      @RequestParam(value = "size", defaultValue = "10") @Min(1) Integer size) {
         BookingState state = BookingState.from(bookingState);
         if (Objects.isNull(state)) {
             throw new IllegalArgumentException(String.format("Unknown state: %s", bookingState));
@@ -58,8 +58,8 @@ public class BookingController {
     @GetMapping("/owner")
     public List<BookingDtoOut> getAllByOwner(@RequestHeader("X-Sharer-User-Id") Long userId,
                                              @RequestParam(value = "state", defaultValue = "ALL") String bookingState,
-                                             @RequestParam(value = "from", required = false, defaultValue = "0") @Min(0) Integer from,
-                                             @RequestParam(value = "size", required = false, defaultValue = "10") @Min(1) Integer size) {
+                                             @RequestParam(value = "from", defaultValue = "0") @Min(0) Integer from,
+                                             @RequestParam(value = "size", defaultValue = "10") @Min(1) Integer size) {
         BookingState state = BookingState.from(bookingState);
         if (Objects.isNull(state)) {
             throw new IllegalArgumentException(String.format("Unknown state: %s", bookingState));

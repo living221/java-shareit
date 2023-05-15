@@ -40,16 +40,16 @@ public class ItemController {
 
     @GetMapping
     public List<ItemDto> getAll(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                @RequestParam(value = "from", required = false, defaultValue = "0") @Min(0) Integer from,
-                                @RequestParam(value = "size", required = false, defaultValue = "10") @Min(1) Integer size) {
+                                @RequestParam(value = "from", defaultValue = "0") @Min(0) Integer from,
+                                @RequestParam(value = "size", defaultValue = "10") @Min(1) Integer size) {
         return itemService.getAllItems(userId, from, size);
     }
 
     @GetMapping("/search")
     public List<ItemDto> searchItems(@RequestHeader("X-Sharer-User-Id") Long userId,
                                      @RequestParam(name = "text") String text,
-                                     @RequestParam(value = "from", required = false, defaultValue = "0") @Min(0) Integer from,
-                                     @RequestParam(value = "size", required = false, defaultValue = "10") @Min(1) Integer size) {
+                                     @RequestParam(value = "from", defaultValue = "0") @Min(0) Integer from,
+                                     @RequestParam(value = "size", defaultValue = "10") @Min(1) Integer size) {
         return itemService.searchItems(userId, text, from, size);
     }
 

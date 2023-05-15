@@ -1,10 +1,13 @@
 package ru.practicum.shareit.item.booking.dao;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.item.booking.model.Booking;
+import ru.practicum.shareit.item.booking.model.BookingStatus;
+import ru.practicum.shareit.item.model.Item;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -122,4 +125,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "ORDER BY b.start_date ASC LIMIT 1",
             nativeQuery = true)
     Optional<Booking> getNextBooking(Long itemId, LocalDateTime currentTime);
+
+    List<Booking> findAllByItemInAndStatus(List<Item> items, BookingStatus status, Sort start);
 }

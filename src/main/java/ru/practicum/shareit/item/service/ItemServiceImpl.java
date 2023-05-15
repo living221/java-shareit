@@ -2,8 +2,10 @@ package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exceptions.ForbiddenException;
@@ -12,6 +14,7 @@ import ru.practicum.shareit.exceptions.ValidationException;
 import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.booking.dao.BookingRepository;
 import ru.practicum.shareit.item.booking.model.Booking;
+import ru.practicum.shareit.item.booking.model.BookingStatus;
 import ru.practicum.shareit.item.comment.CommentMapper;
 import ru.practicum.shareit.item.comment.dao.CommentRepository;
 import ru.practicum.shareit.item.comment.dto.CommentDto;
@@ -23,12 +26,12 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.*;
 
+import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
+import static org.springframework.data.domain.Sort.Direction.DESC;
 import static ru.practicum.shareit.item.ItemMapper.toItem;
 import static ru.practicum.shareit.item.ItemMapper.toItemDto;
 import static ru.practicum.shareit.item.booking.BookingMapper.toBookingItemDto;
@@ -128,17 +131,33 @@ public class ItemServiceImpl implements ItemService {
 
         Pageable pageable = PageRequest.of(from / size, size);
 
-        List<ItemDto> items = itemRepository.findAllByOwnerIdOrderByIdAsc(userId, pageable).stream()
-                .map(ItemMapper::toItemDto)
-                .collect(Collectors.toList());
+        Page<Item> items = itemRepository.findByOwner_Id(userId, pageable);
 
-        items.forEach(i -> {
-            getLastBooking(i);
-            getNextBooking(i);
-            i.setComments(getAllComments(i.getId()));
-        });
+        Map<Item, List<Comment>> comments =
+                commentRepository.findByItemIn(items.getContent(), Sort.by(DESC, "created")).stream()
+                        .collect(groupingBy(Comment::getItem, toList()));
 
-        return items;
+        Map<Item, List<Booking>> approvedBookings =
+                bookingRepository.findAllByItemInAndStatus(items.getContent(), BookingStatus.APPROVED,
+                                Sort.by(DESC, "start")).stream()
+                        .collect(groupingBy(Booking::getItem, toList()));
+
+        List<ItemDto> results = new ArrayList<>();
+        for (Item item : items) {
+            ItemDto itemDto = toItemDto(
+                    item,
+                    approvedBookings.containsKey(item) ? approvedBookings.get(item)
+                            .stream().filter(booking -> (booking.getStart().isBefore(LocalDateTime.now())))
+                            .max(comparing(Booking::getStart)).orElse(null) : null,
+                    approvedBookings.containsKey(item) ? approvedBookings.get(item)
+                            .stream().filter(booking -> (booking.getStart().isAfter(LocalDateTime.now())))
+                            .min(comparing(Booking::getStart)).orElse(null) : null,
+                    comments.getOrDefault(item, Collections.emptyList())
+            );
+            results.add(itemDto);
+        }
+
+        return results;
     }
 
     @Transactional
@@ -147,7 +166,7 @@ public class ItemServiceImpl implements ItemService {
 
         return comments.stream()
                 .map(CommentMapper::toCommentDto)
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     @Override
@@ -166,7 +185,7 @@ public class ItemServiceImpl implements ItemService {
                 .filter(item -> item.getName().toLowerCase().contains(text.toLowerCase())
                         || item.getDescription().toLowerCase().contains(text.toLowerCase()))
                 .map(ItemMapper::toItemDto)
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     @Override
