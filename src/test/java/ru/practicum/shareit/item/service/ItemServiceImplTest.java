@@ -8,12 +8,14 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import ru.practicum.shareit.exceptions.ForbiddenException;
 import ru.practicum.shareit.exceptions.ObjectNotFoundException;
 import ru.practicum.shareit.exceptions.ValidationException;
 import ru.practicum.shareit.item.ItemMapper;
-import ru.practicum.shareit.item.booking.BookingMapper;
 import ru.practicum.shareit.item.booking.dao.BookingRepository;
 import ru.practicum.shareit.item.booking.model.Booking;
 import ru.practicum.shareit.item.booking.model.BookingStatus;
@@ -31,13 +33,12 @@ import ru.practicum.shareit.user.service.UserService;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
-import static ru.practicum.shareit.item.booking.BookingMapper.*;
+import static ru.practicum.shareit.item.booking.BookingMapper.toBookingItemDto;
 import static ru.practicum.shareit.item.comment.CommentMapper.toCommentDto;
 
 @ExtendWith(MockitoExtension.class)
