@@ -29,10 +29,12 @@ public class ItemDto {
     @Size(groups = {Create.class, Update.class}, min = 1, message = "Description cannot be empty")
     private String description;
 
-    @NotNull(groups = {Create.class})
+    @NotNull(groups = {Create.class}, message = "Available cannot be null.")
     private Boolean available;
     private BookingItemDto lastBooking;
     private BookingItemDto nextBooking;
 
     private List<CommentDto> comments;
+
+    private Long requestId;
 }
