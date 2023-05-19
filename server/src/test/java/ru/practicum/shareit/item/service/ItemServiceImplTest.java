@@ -272,7 +272,7 @@ class ItemServiceImplTest {
 
         when(userService.getUserById(user.getId())).thenReturn(userDto);
         Page<Item> items = new PageImpl<>(List.of(item));
-        when(itemRepository.findByOwner_Id(anyLong(), any(Pageable.class))).thenReturn(items);
+        when(itemRepository.findByOwner_IdOrderByIdAsc(anyLong(), any(Pageable.class))).thenReturn(items);
         when(commentRepository.findByItemIn(anyList(), any(Sort.class))).thenReturn(List.of(comment));
         when(bookingRepository.findAllByItemInAndStatus(anyList(), any(BookingStatus.class), any(Sort.class)))
                 .thenReturn(List.of(lastBooking, nextBooking, pastBooking, futureBooking));

@@ -131,7 +131,7 @@ public class ItemServiceImpl implements ItemService {
 
         Pageable pageable = PageRequest.of(from / size, size);
 
-        Page<Item> items = itemRepository.findByOwner_Id(userId, pageable);
+        Page<Item> items = itemRepository.findByOwner_IdOrderByIdAsc(userId, pageable);
 
         Map<Item, List<Comment>> comments =
                 commentRepository.findByItemIn(items.getContent(), Sort.by(DESC, "created")).stream()

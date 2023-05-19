@@ -12,5 +12,5 @@ import java.util.List;
 public interface ItemRepository extends JpaRepository<Item, Long> {
     List<Item> findAllByOwnerIdOrderByIdAsc(Long ownerId, Pageable pageable);
 
-    Page<Item> findByOwner_Id(Long userId, Pageable pageable);
+    Page<Item> findByOwner_IdOrderByIdAsc(Long userId, Pageable pageable);
 }
