@@ -1,15 +1,11 @@
 package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.comment.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
-import ru.practicum.shareit.util.Create;
-import ru.practicum.shareit.util.Update;
 
-import javax.validation.constraints.Min;
 import java.util.List;
 
 @RestController
@@ -21,13 +17,13 @@ public class ItemController {
 
     @PostMapping
     public ItemDto createItem(@RequestHeader("X-Sharer-User-Id") Long userId,
-                              @Validated({Create.class}) @RequestBody ItemDto itemDto) {
+                              @RequestBody ItemDto itemDto) {
         return itemService.addNewItem(userId, itemDto);
     }
 
     @PatchMapping("/{itemId}")
     public ItemDto update(@RequestHeader("X-Sharer-User-Id") Long userId,
-                          @Validated({Update.class}) @RequestBody ItemDto itemDto,
+                          @RequestBody ItemDto itemDto,
                           @PathVariable("itemId") Long itemId) {
         return itemService.updateItem(userId, itemId, itemDto);
     }
@@ -40,22 +36,22 @@ public class ItemController {
 
     @GetMapping
     public List<ItemDto> getAll(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                @RequestParam(value = "from", defaultValue = "0") @Min(0) Integer from,
-                                @RequestParam(value = "size", defaultValue = "10") @Min(1) Integer size) {
+                                @RequestParam(value = "from", defaultValue = "0") Integer from,
+                                @RequestParam(value = "size", defaultValue = "10") Integer size) {
         return itemService.getAllItems(userId, from, size);
     }
 
     @GetMapping("/search")
     public List<ItemDto> searchItems(@RequestHeader("X-Sharer-User-Id") Long userId,
                                      @RequestParam(name = "text") String text,
-                                     @RequestParam(value = "from", defaultValue = "0") @Min(0) Integer from,
-                                     @RequestParam(value = "size", defaultValue = "10") @Min(1) Integer size) {
+                                     @RequestParam(value = "from", defaultValue = "0") Integer from,
+                                     @RequestParam(value = "size", defaultValue = "10") Integer size) {
         return itemService.searchItems(userId, text, from, size);
     }
 
     @PostMapping("/{itemId}/comment")
     public CommentDto createComment(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                    @Validated({Create.class}) @RequestBody CommentDto commentDto,
+                                    @RequestBody CommentDto commentDto,
                                     @PathVariable Long itemId) {
         return itemService.createComment(userId, commentDto, itemId);
     }

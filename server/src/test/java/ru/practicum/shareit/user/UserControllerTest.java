@@ -58,44 +58,6 @@ class UserControllerTest {
 
     @Test
     @SneakyThrows
-    @DisplayName("Тестирование добавления пользователя c некорректным Email")
-    void createUser_wheUserEmailIsNotValid_thenReturnBadRequest() {
-        UserDto userDtoToCreate = UserDto.builder()
-                .email("email.com")
-                .name("name")
-                .build();
-
-        when(userService.addNewUser(userDtoToCreate)).thenReturn(userDtoToCreate);
-
-        mockMvc.perform(post("/users")
-                        .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(userDtoToCreate)))
-                .andExpect(status().isBadRequest());
-
-        verify(userService, never()).addNewUser(userDtoToCreate);
-    }
-
-    @Test
-    @SneakyThrows
-    @DisplayName("Тестирование добавления пользователя c некорректным Name")
-    void createUser_wheNameIsNotValid_thenReturnBadRequest() {
-        UserDto userDtoToCreate = UserDto.builder()
-                .email("email@email.com")
-                .name("     ")
-                .build();
-
-        when(userService.addNewUser(userDtoToCreate)).thenReturn(userDtoToCreate);
-
-        mockMvc.perform(post("/users")
-                        .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(userDtoToCreate)))
-                .andExpect(status().isBadRequest());
-
-        verify(userService, never()).addNewUser(userDtoToCreate);
-    }
-
-    @Test
-    @SneakyThrows
     @DisplayName("Тестирование обновления пользователя")
     void updateUser_WhenUserIsValid() {
         Long userId = 0L;
@@ -115,27 +77,6 @@ class UserControllerTest {
                 .getContentAsString();
 
         assertEquals(objectMapper.writeValueAsString(userDtoToUpdate), result);
-    }
-
-    @Test
-    @SneakyThrows
-    @DisplayName("Тестирование обновления пользователя с некорректными полями")
-    void updateUser_WhenUserIsNotValid_thenReturnBadRequest() {
-        Long userId = 0L;
-        UserDto userDtoToUpdate = UserDto.builder()
-                .email("update.com")
-                .name("    ")
-                .build();
-
-        when(userService.updateUser(userDtoToUpdate, userId)).thenReturn(userDtoToUpdate);
-
-        mockMvc.perform(patch("/users/{userId}", userId)
-                        .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(userDtoToUpdate)))
-                .andExpect(status().isBadRequest());
-
-
-        verify(userService, never()).updateUser(userDtoToUpdate, userId);
     }
 
     @Test

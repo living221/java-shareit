@@ -61,52 +61,6 @@ class ItemControllerTest {
 
     @Test
     @SneakyThrows
-    @DisplayName("Тестирование добавления вещи не прошедшей валидацию")
-    void createItem_whenItemIsNotValid_thenReturnBadRequest() {
-        Long userId = 0L;
-        ItemDto itemDtoToCreate = ItemDto.builder()
-                .description(" ")
-                .name(" ")
-                .available(null)
-                .build();
-
-        when(itemService.addNewItem(userId, itemDtoToCreate)).thenReturn(itemDtoToCreate);
-
-        mockMvc.perform(post("/items")
-                        .contentType("application/json")
-                        .header("X-Sharer-User-Id", userId)
-                        .content(objectMapper.writeValueAsString(itemDtoToCreate)))
-                .andExpect(status().isBadRequest());
-
-        verify(itemService, never()).addNewItem(userId, itemDtoToCreate);
-    }
-
-    @Test
-    @SneakyThrows
-    @DisplayName("Тестирование обновления вещи не прошедшей валидацию")
-    void update_whenItemIsNotValid_thenReturnBadRequest() {
-        Long itemId = 0L;
-        Long userId = 0L;
-        ItemDto itemDtoToCreate = ItemDto.builder()
-                .id(itemId)
-                .description("")
-                .name("")
-                .available(true)
-                .build();
-
-        when(itemService.updateItem(userId, itemId, itemDtoToCreate)).thenReturn(itemDtoToCreate);
-
-        mockMvc.perform(patch("/items/{itemId}", itemId)
-                        .contentType("application/json")
-                        .header("X-Sharer-User-Id", userId)
-                        .content(objectMapper.writeValueAsString(itemDtoToCreate)))
-                .andExpect(status().isBadRequest());
-
-        verify(itemService, never()).updateItem(userId, itemId, itemDtoToCreate);
-    }
-
-    @Test
-    @SneakyThrows
     @DisplayName("Тестирование обновления вещи прошедшей валидацию")
     void update_whenItemIsValid_thenReturnStatusIsOk() {
         Long itemId = 0L;

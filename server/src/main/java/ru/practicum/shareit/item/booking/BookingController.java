@@ -7,9 +7,7 @@ import ru.practicum.shareit.item.booking.dto.BookingDto;
 import ru.practicum.shareit.item.booking.dto.BookingDtoOut;
 import ru.practicum.shareit.item.booking.model.BookingState;
 import ru.practicum.shareit.item.booking.service.BookingService;
-import ru.practicum.shareit.util.Create;
 
-import javax.validation.constraints.Min;
 import java.util.List;
 import java.util.Objects;
 
@@ -23,7 +21,7 @@ public class BookingController {
 
     @PostMapping
     public BookingDtoOut createBooking(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                       @Validated({Create.class}) @RequestBody BookingDto bookingDto) {
+                                       @RequestBody BookingDto bookingDto) {
         return bookingService.create(userId, bookingDto);
     }
 
@@ -45,8 +43,8 @@ public class BookingController {
     @GetMapping
     public List<BookingDtoOut> getAll(@RequestHeader("X-Sharer-User-Id") Long userId,
                                       @RequestParam(value = "state", defaultValue = "ALL") String bookingState,
-                                      @RequestParam(value = "from", defaultValue = "0") @Min(0) Integer from,
-                                      @RequestParam(value = "size", defaultValue = "10") @Min(1) Integer size) {
+                                      @RequestParam(value = "from", defaultValue = "0") Integer from,
+                                      @RequestParam(value = "size", defaultValue = "10") Integer size) {
         BookingState state = BookingState.from(bookingState);
         if (Objects.isNull(state)) {
             throw new IllegalArgumentException(String.format("Unknown state: %s", bookingState));
@@ -58,8 +56,8 @@ public class BookingController {
     @GetMapping("/owner")
     public List<BookingDtoOut> getAllByOwner(@RequestHeader("X-Sharer-User-Id") Long userId,
                                              @RequestParam(value = "state", defaultValue = "ALL") String bookingState,
-                                             @RequestParam(value = "from", defaultValue = "0") @Min(0) Integer from,
-                                             @RequestParam(value = "size", defaultValue = "10") @Min(1) Integer size) {
+                                             @RequestParam(value = "from", defaultValue = "0") Integer from,
+                                             @RequestParam(value = "size", defaultValue = "10") Integer size) {
         BookingState state = BookingState.from(bookingState);
         if (Objects.isNull(state)) {
             throw new IllegalArgumentException(String.format("Unknown state: %s", bookingState));

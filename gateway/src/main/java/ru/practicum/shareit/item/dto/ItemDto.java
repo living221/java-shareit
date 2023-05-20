@@ -30,6 +30,7 @@ public class ItemDto {
 
     @NotNull(groups = {Create.class}, message = "Available cannot be null.")
     private Boolean available;
+
     private BookingItemDto lastBooking;
     private BookingItemDto nextBooking;
 

@@ -84,25 +84,6 @@ class BookingControllerTest {
 
     @Test
     @SneakyThrows
-    @DisplayName("Тестирование эндпоинта post /bookings с невалидными данными")
-    void createBooking_whenBookingIsNotValid_thenReturnBadRequest() {
-        bookingDto.setItemId(null);
-        bookingDto.setStart(null);
-        bookingDto.setEnd(null);
-
-        when(bookingService.create(user.getId(), bookingDto)).thenReturn(bookingDtoOut);
-
-        mockMvc.perform(post("/bookings")
-                        .contentType("application/json")
-                        .header("X-Sharer-User-Id", user.getId())
-                        .content(objectMapper.writeValueAsString(bookingDto)))
-                .andExpect(status().isBadRequest());
-
-        verify(bookingService, never()).create(user.getId(), bookingDto);
-    }
-
-    @Test
-    @SneakyThrows
     @DisplayName("Тестирование эндпоинта patch /bookings/{bookingId}")
     void update_whenBookingIsValid_thenReturnStatusIsOk() {
         Boolean approved = true;
