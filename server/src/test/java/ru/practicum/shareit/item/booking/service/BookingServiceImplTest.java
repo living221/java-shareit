@@ -8,7 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Pageable;
 import ru.practicum.shareit.exceptions.ObjectNotFoundException;
-import ru.practicum.shareit.exceptions.ValidationException;
+import ru.practicum.shareit.exceptions.BookingValidationException;
 import ru.practicum.shareit.item.booking.dao.BookingRepository;
 import ru.practicum.shareit.item.booking.dto.BookingDto;
 import ru.practicum.shareit.item.booking.dto.BookingDtoOut;
@@ -134,7 +134,7 @@ class BookingServiceImplTest {
         when(userService.getUserById(userDto.getId())).thenReturn(userDto);
         when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
 
-        ValidationException bookingValidationException = assertThrows(ValidationException.class,
+        BookingValidationException bookingValidationException = assertThrows(BookingValidationException.class,
                 () -> bookingService.create(userDto.getId(), bookingDtoStartBeforeNow));
 
         assertEquals(bookingValidationException.getMessage(), String.format("Start date: %s cannot be before current time.",
@@ -147,7 +147,7 @@ class BookingServiceImplTest {
         when(userService.getUserById(userDto.getId())).thenReturn(userDto);
         when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
 
-        ValidationException bookingValidationException = assertThrows(ValidationException.class,
+        BookingValidationException bookingValidationException = assertThrows(BookingValidationException.class,
                 () -> bookingService.create(userDto.getId(), bookingDtoEndBeforeStart));
 
         assertEquals(bookingValidationException.getMessage(), String.format("End date: %s cannot be before start date: %s.",
@@ -161,7 +161,7 @@ class BookingServiceImplTest {
         when(userService.getUserById(userDto.getId())).thenReturn(userDto);
         when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
 
-        ValidationException bookingValidationException = assertThrows(ValidationException.class,
+        BookingValidationException bookingValidationException = assertThrows(BookingValidationException.class,
                 () -> bookingService.create(userDto.getId(), bookingDto));
 
         assertEquals(bookingValidationException.getMessage(), String.format("Item with id %s is not available.",
@@ -209,7 +209,7 @@ class BookingServiceImplTest {
     void update_whenStatusNotWaiting() {
         when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(booking));
 
-        ValidationException bookingValidationException = assertThrows(ValidationException.class,
+        BookingValidationException bookingValidationException = assertThrows(BookingValidationException.class,
                 () -> bookingService.update(owner.getId(), booking.getId(), false));
 
         assertEquals(bookingValidationException.getMessage(), String.format("Booking with id %s already changed status",

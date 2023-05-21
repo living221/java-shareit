@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exceptions.ForbiddenException;
 import ru.practicum.shareit.exceptions.ObjectNotFoundException;
-import ru.practicum.shareit.exceptions.ValidationException;
+import ru.practicum.shareit.exceptions.BookingValidationException;
 import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.booking.dao.BookingRepository;
 import ru.practicum.shareit.item.booking.model.Booking;
@@ -206,7 +206,7 @@ public class ItemServiceImpl implements ItemService {
 
         if (userBookings.isEmpty()) {
             log.debug("User with id {} should have a least one booking of item with id {}.", userId, itemId);
-            throw new ValidationException(String.format("User with id %s should have a least one booking " +
+            throw new BookingValidationException(String.format("User with id %s should have a least one booking " +
                     "of item with id %s.", userId, itemId));
         }
 

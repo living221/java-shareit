@@ -14,7 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import ru.practicum.shareit.exceptions.ForbiddenException;
 import ru.practicum.shareit.exceptions.ObjectNotFoundException;
-import ru.practicum.shareit.exceptions.ValidationException;
+import ru.practicum.shareit.exceptions.BookingValidationException;
 import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.booking.dao.BookingRepository;
 import ru.practicum.shareit.item.booking.model.Booking;
@@ -345,7 +345,7 @@ class ItemServiceImplTest {
         when(bookingRepository.findAllByUserBookings(anyLong(), anyLong(), any(LocalDateTime.class)))
                 .thenReturn(Collections.emptyList());
 
-        ValidationException userBookingsNotFoundException = assertThrows(ValidationException.class,
+        BookingValidationException userBookingsNotFoundException = assertThrows(BookingValidationException.class,
                 () -> itemService.createComment(user.getId(), toCommentDto(comment), item.getId()));
 
         assertEquals(userBookingsNotFoundException.getMessage(), String.format("User with id %s should have a least " +

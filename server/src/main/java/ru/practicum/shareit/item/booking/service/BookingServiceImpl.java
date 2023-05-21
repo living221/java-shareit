@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exceptions.ObjectNotFoundException;
-import ru.practicum.shareit.exceptions.ValidationException;
+import ru.practicum.shareit.exceptions.BookingValidationException;
 import ru.practicum.shareit.item.booking.BookingMapper;
 import ru.practicum.shareit.item.booking.dao.BookingRepository;
 import ru.practicum.shareit.item.booking.dto.BookingDto;
@@ -74,7 +74,7 @@ public class BookingServiceImpl implements BookingService {
         }
 
         if (!booking.getStatus().equals(BookingStatus.WAITING)) {
-            throw new ValidationException(String.format("Booking with id %s already changed status",
+            throw new BookingValidationException(String.format("Booking with id %s already changed status",
                     booking.getId()));
         }
 
@@ -191,22 +191,22 @@ public class BookingServiceImpl implements BookingService {
     private void bookingValidation(BookingDto bookingDto, User user, Item item) {
 
         if (bookingDto.getStart().isBefore(LocalDateTime.now())) {
-            throw new ValidationException(
+            throw new BookingValidationException(
                     String.format("Start date: %s cannot be before current time.",
                             bookingDto.getStart()));
         }
         if (bookingDto.getStart().isAfter(bookingDto.getEnd())) {
-            throw new ValidationException(
+            throw new BookingValidationException(
                     String.format("End date: %s cannot be before start date: %s.",
                             bookingDto.getEnd(), bookingDto.getStart()));
         }
         if (bookingDto.getStart().isEqual(bookingDto.getEnd())) {
-            throw new ValidationException(
+            throw new BookingValidationException(
                     String.format("End date: %s cannot be equals start date: %s.",
                             bookingDto.getEnd(), bookingDto.getStart()));
         }
         if (!item.getAvailable()) {
-            throw new ValidationException(
+            throw new BookingValidationException(
                     String.format("Item with id %s is not available.",
                             item.getId())
             );
